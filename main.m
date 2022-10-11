@@ -15,36 +15,39 @@ start(vid)
 
 % save the background image
 background_image = getdata(vid, 1);
+background_image = double(background_image) ./...
+    max(max(double(background_image)));
 
-% parameters
-black_threshold = 0.2 * 255;
-
-% runtime variables
-frame_counter = 1;
-
-% get the grayscale of the background
-binary = zeros(480, 640);
-for m = 1:480
-    for n = 1:640
-        binary(m, n) = sum(background_image(m, n, :)) < black_threshold*3;
-    end
-end
-imshow(binary)
-
-% find the image crosshairs
-
-figure()
 % main loop
+frame_counter = 0;
 while true
     % get the new image frame
     frame_counter = frame_counter + 1;
     data = getdata(vid, frame_counter);
+    data = double(data) ./ double(max(max(data)));
     
     % background subtraction
-    delta = data(:,:,:,1) - background_image;
+    delta = double(data(:,:,:,1) - background_image);
+    delta = delta ./ max(max(delta));
+    
+    % form a windowing matrix
+    threshold = [0.05, 0.02, 0.10];
+    window = (delta(:, :, 1) > threshold(1)) | ...
+             (delta(:, :, 2) > threshold(2)) | ...
+             (delta(:, :, 3) > threshold(3));
+    
+    % window the data
+    image(:, :, 1) = data(:, :, 1, 1) .* window;
+    image(:, :, 2) = data(:, :, 2, 1) .* window;
+    image(:, :, 3) = data(:, :, 3, 1) .* window;
     
     % search for positions in the ring
+    [centers, radii] = imfindcircles(image, 100);
+    
+    if length(centers) > 1
+        fprintf("center at %d, radius %d\n", centers(1), radii(1))
+    end
     
     % show the image to the screen
-    imshow(delta);
+    imshow(image);
 end
