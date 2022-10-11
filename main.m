@@ -16,8 +16,13 @@ frame_counter = 1;
 
 % main loop
 while true
+    % get the new image frame
     frame_counter = frame_counter + 1;
     data = getdata(vid, frame_counter);
+    
+    % background subtraction
     delta = data(:,:,:,1) - background_image;
+    
+    % show the image to the screen
     imshow(delta);
 end
