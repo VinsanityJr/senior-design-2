@@ -3,6 +3,10 @@ if exist('vid', 'var')
     stop(vid)
 end
 
+clear
+clc
+close all
+
 % create a video object for matlab to get images from
 vid = videoinput('winvideo', 2, 'MJPG_640x480');
 
@@ -27,27 +31,24 @@ while true
     data = double(data) ./ double(max(max(data)));
     
     % background subtraction
-    delta = double(data(:,:,:,1) - background_image);
-    delta = delta ./ max(max(delta));
+    delta = data(:,:,:,1) - background_image;
+    delta = abs(delta ./ max(max(delta)));
     
     % form a windowing matrix
-    threshold = [0.05, 0.02, 0.10];
-    window = (delta(:, :, 1) > threshold(1)) | ...
-             (delta(:, :, 2) > threshold(2)) | ...
-             (delta(:, :, 3) > threshold(3));
-    
+    threshold = 0.6;
+    window = sum(delta, 3) > threshold * 3;
+    window = medfilt2(window);
+         
+         
     % window the data
     image(:, :, 1) = data(:, :, 1, 1) .* window;
     image(:, :, 2) = data(:, :, 2, 1) .* window;
     image(:, :, 3) = data(:, :, 3, 1) .* window;
     
     % search for positions in the ring
-    [centers, radii] = imfindcircles(image, 100);
-    
-    if length(centers) > 1
-        fprintf("center at %d, radius %d\n", centers(1), radii(1))
-    end
+    [centers, radii] = imfindcircles(window, [20, 50]);
     
     % show the image to the screen
-    imshow(image);
+    imshow(image, [0.0, 1.0]);
+    viscircles(centers, radii, 'EdgeColor', 'w');
 end
