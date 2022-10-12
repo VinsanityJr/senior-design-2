@@ -50,7 +50,7 @@ while true
     gamestate.background_subtracted = image;
     
     % search for positions in the ring
-    [centers, radii] = imfindcircles(window, [20, 50]);
+    [centers, radii] = imfindcircles(window, [20, 35]);
     
     % get the pixel colors
     if ~isempty(centers)
@@ -67,15 +67,25 @@ while true
             rgb_colors(c, 2) = data(point(2), point(1), 2);
             rgb_colors(c, 3) = data(point(2), point(1), 3);
         end
+
+        gamestate.colors = "";
+        for n = 1:length(centers(:, 1))
+            gamestate.colors(n) = ...
+                classify(rgb_colors(n,1),rgb_colors(n,2), rgb_colors(n,3));
+        end
+
+        % calculate center of circle's degrees from x-axis 
+        gamestate.positions = [];
+        angles = ...
+            [mod(atan2d(-1*(centers(:, 2) - 240), centers(:, 1) - 320) + 360, 360)];
+        
+
+        gamestate.positions = [centers,angles];
+
     end
-    
-    % calculate radial coordinates
-    centers = centers - [320, 240]; % shift the coordinate system
-    polar = [radii, atan(centers(:, 2) ./ centers(:, 1) )];
-    
-    gamestate.positions = polar;
     
     % show the image to the screen
     imshow(image, [0.0, 1.0]);
     viscircles(centers, radii, 'EdgeColor', 'm');
+
 end
