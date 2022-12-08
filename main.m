@@ -34,9 +34,11 @@ gamestate.bkgd_image = gamestate.bkgd_image ./ max(max(gamestate.bkgd_image));
 
 % main loop
 while true
+
+    % do GUI stuff here? or above? or below?
     % Present GUI to user
     % GUI STUFF
-    condiments = {'red', 'blue', 'green', 'yellow'};
+
     
     % Take and process the current state of the gameboard
     gamestate = take_snapshot(gamestate, threshold);
@@ -48,6 +50,12 @@ while true
         error("No condiments on gameboard");
     end
     
+    % put GUI stuff here?
+    waitfor(appGUI);
+
+    % start clock
+    tstart = tic;
+
     % reset motor status variables
     distance = 360;
     motor_target = 1;
@@ -102,4 +110,8 @@ while true
         pause(actuator_delay);
         set_param('simulink_model/Act-Up', 'Value', '0');
     end
+
+    telapsed = toc(tstart);
+    clockGUI;
+
 end
