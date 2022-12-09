@@ -25,6 +25,8 @@ function gamestate = find_circles(gamestate, search_radii)
             rgb_colors(c, 2) = gamestate.image(point(2), point(1), 2);
             rgb_colors(c, 3) = gamestate.image(point(2), point(1), 3);
         end
+        
+        gamestate.rgb_colors = rgb_colors;
 
         for n = 1:len
             gamestate.circles{n, 1} = classify(rgb_colors(n,1), rgb_colors(n,2), rgb_colors(n,3));

@@ -4,7 +4,7 @@
 function color = classify(r,g,b)
 
 
-    if(b > 0.75)
+    if(b > 0.75 && r < 0.6)
         color = "Blue";
     elseif(g*0.8 > r)
         color = "Green";

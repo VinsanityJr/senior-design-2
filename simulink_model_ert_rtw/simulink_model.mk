@@ -2,7 +2,7 @@
 ## Makefile generated for component 'simulink_model'. 
 ## 
 ## Makefile     : simulink_model.mk
-## Generated on : Fri Dec 09 10:05:54 2022
+## Generated on : Fri Dec 09 14:38:14 2022
 ## Final product: $(RELATIVE_PATH_TO_ANCHOR)/simulink_model.elf
 ## Product type : executable
 ## 
